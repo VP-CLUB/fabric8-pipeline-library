@@ -10,7 +10,7 @@ def call(body) {
 
     sh "git checkout -b ${env.JOB_NAME}-${config.version}"
     sh "mvn org.codehaus.mojo:versions-maven-plugin:2.2:set -U -DnewVersion=${config.version}"
-    sh "mvn clean -e -U deploy"
+    sh "mvn clean -e -U deploy -DskipTests"
 
     def s2iMode = flow.isOpenShiftS2I()
     echo "s2i mode: ${s2iMode}"
@@ -35,7 +35,7 @@ def call(body) {
 
     if (flow.hasService("content-repository")) {
       try {
-        sh 'mvn site site:deploy'
+        sh 'mvn site site:deploy -DskipTests'
       } catch (err) {
         // lets carry on as maven site isn't critical
         echo 'unable to generate maven site'
